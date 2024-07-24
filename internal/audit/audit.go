@@ -33,7 +33,6 @@ func (audit *Audit) Start() error {
 	for {
 		mavisBlock, err := mavis.GetLatestBlock()
 		if err != nil {
-			audit.checkErr("Failed to reach sky mavis rpc many time.", audit.cfg.InfinityGroupId)
 			continue
 		}
 
