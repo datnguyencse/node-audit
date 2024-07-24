@@ -43,7 +43,7 @@ func (audit *Audit) Start() error {
 		}
 
 		if eternityBlock.BlockNumber() < mavisBlock.BlockNumber()-audit.cfg.MaxBlockDelay {
-			audit.checkErr(fmt.Sprintf("Eternity non-validator node is delayed: %d blocks", mavisBlock.BlockNumber()-eternityBlock.BlockNumber()), audit.cfg.InfinityGroupId)
+			audit.checkErr(fmt.Sprintf("Eternity non-validator node block %d, skymavis block %d, is delayed: %d blocks", eternityBlock.BlockNumber(), mavisBlock.BlockNumber(), mavisBlock.BlockNumber()-eternityBlock.BlockNumber()), audit.cfg.InfinityGroupId)
 		}
 
 		time.Sleep(time.Duration(1000) * time.Millisecond)
