@@ -41,12 +41,14 @@ func (audit *Audit) Start() error {
 	for {
 		mavisBlock, err := mavis.Eth.GetBlockNumber()
 		if err != nil {
+			time.Sleep(time.Duration(500) * time.Millisecond)
 			continue
 		}
 
 		eternityBlock, err := eternity.Eth.GetBlockNumber()
 		if err != nil {
 			audit.checkErr("Failed to reach eternity validator node rpc many time.", audit.cfg.RoninNodeGroupId)
+			time.Sleep(time.Duration(500) * time.Millisecond)
 			continue
 		}
 
