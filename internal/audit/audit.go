@@ -3,10 +3,11 @@ package audit
 import (
 	"fmt"
 	"go-node-audit/config"
-	"go-node-audit/pkg/rpc"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/chenzhijie/go-web3"
 
 	golog "github.com/ipfs/go-log"
 )
@@ -25,25 +26,32 @@ func New(cfg *config.Config) *Audit {
 }
 
 func (audit *Audit) Start() error {
-	mavis := rpc.NewRPCClient(rpc.JsonRpcUrl(audit.cfg.MavisRpc))
-	eternity := rpc.NewRPCClient(rpc.JsonRpcUrl(audit.cfg.EternityRpc))
+	mavis, err := web3.NewWeb3(audit.cfg.MavisRpc)
+	if err != nil {
+		panic(err)
+	}
+
+	eternity, err := web3.NewWeb3(audit.cfg.EternityRpc)
+	if err != nil {
+		panic(err)
+	}
 
 	log.Infof("Infinity group id: %d, ronin node id: %d", audit.cfg.InfinityGroupId, audit.cfg.RoninNodeGroupId)
 	audit.checkErr("Ronin node monitor bot started", audit.cfg.RoninNodeGroupId)
 	for {
-		mavisBlock, err := mavis.GetLatestBlock()
+		mavisBlock, err := mavis.Eth.GetBlockNumber()
 		if err != nil {
 			continue
 		}
 
-		eternityBlock, err := eternity.GetLatestBlock()
+		eternityBlock, err := eternity.Eth.GetBlockNumber()
 		if err != nil {
 			audit.checkErr("Failed to reach eternity validator node rpc many time.", audit.cfg.RoninNodeGroupId)
 			continue
 		}
 
-		if eternityBlock.BlockNumber() < mavisBlock.BlockNumber()-audit.cfg.MaxBlockDelay {
-			audit.checkErr(fmt.Sprintf("Eternity non-validator node block %d, skymavis block %d, is delayed: %d blocks", eternityBlock.BlockNumber(), mavisBlock.BlockNumber(), mavisBlock.BlockNumber()-eternityBlock.BlockNumber()), audit.cfg.InfinityGroupId)
+		if eternityBlock < mavisBlock-audit.cfg.MaxBlockDelay {
+			audit.checkErr(fmt.Sprintf("Eternity non-validator node block %d, skymavis block %d, is delayed: %d blocks", eternityBlock, mavisBlock, mavisBlock-eternityBlock), audit.cfg.InfinityGroupId)
 		}
 
 		time.Sleep(time.Duration(1000) * time.Millisecond)

@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/ardanlabs/conf/v3 v3.1.2
+	github.com/chenzhijie/go-web3 v0.0.0-20230921142927-cd8f05f8d203
 	github.com/ethereum/go-ethereum v1.11.2
 	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/google/uuid v1.3.0
@@ -19,6 +20,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/ipfs/go-log/v2 v2.1.3 // indirect
 	github.com/klauspost/compress v1.16.3 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
